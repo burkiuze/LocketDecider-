@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "locket-decider"
+version = "0.1.0"
+description = "Locket Decider²: a 7B open-weights model for enterprise decisions"
+readme = "README.md"
+license = { text = "Apache-2.0" }
+requires-python = ">=3.10"
+dependencies = ["numpy>=1.26"]
+
+[project.optional-dependencies]
+train = [
+  "torch>=2.4",
+  "transformers>=4.56",
+  "datasets>=3.0",
+  "peft>=0.13",
+  "trl>=0.20",
+  "accelerate>=1.0",
+  "bitsandbytes>=0.44; platform_system == 'Linux'",
+]
+serve = ["torch>=2.4", "transformers>=4.56", "peft>=0.13", "accelerate>=1.0", "fastapi>=0.110", "uvicorn>=0.29"]
+dev = ["pytest>=8", "httpx>=0.27"]
+
+[project.scripts]
+locket-train = "locket_decider.train:main"
+locket-calibrate = "locket_decider.evaluate:main_calibrate"
+locket-eval = "locket_decider.evaluate:main_eval"
+locket-merge = "locket_decider.merge:main"
+locket-serve = "locket_decider.serve:main"
+locket-distill = "locket_decider.distill:main"
+
+[tool.setuptools.packages.find]
+include = ["locket_decider*"]

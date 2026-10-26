@@ -1,0 +1,53 @@
+{
+  "name": "locket-decider-2-7b",
+  "base_model": "Qwen/Qwen2.5-7B-Instruct",
+  "seed": 0,
+  "data": {
+    "train": {
+      "banking77": 10003,
+      "clinc_oos": 15000,
+      "massive_en": 11514,
+      "massive_tr": 11514,
+      "multi_nli": 60000,
+      "boolq": 9427
+    },
+    "validation": {
+      "banking77": 500,
+      "clinc_oos": 1000,
+      "massive_en": 1000,
+      "massive_tr": 1000,
+      "multi_nli": 1500,
+      "boolq": 500
+    },
+    "eval": {
+      "banking77": 3080,
+      "clinc_oos": 5500,
+      "massive_en": 2974,
+      "massive_tr": 2974,
+      "multi_nli": 9832,
+      "boolq": 3270
+    },
+    "jsonl": {"train": [], "validation": [], "eval": []},
+    "p_none": 0.1,
+    "max_options": 12
+  },
+  "lora": {
+    "r": 64,
+    "alpha": 128,
+    "dropout": 0.05,
+    "target_modules": "all-linear"
+  },
+  "train": {
+    "learning_rate": 1e-4,
+    "num_train_epochs": 2,
+    "per_device_train_batch_size": 8,
+    "gradient_accumulation_steps": 4,
+    "max_length": 1536,
+    "warmup_ratio": 0.03,
+    "lr_scheduler_type": "cosine",
+    "weight_decay": 0.0,
+    "logging_steps": 20,
+    "save_steps": 500,
+    "eval_steps": 500
+  }
+}
