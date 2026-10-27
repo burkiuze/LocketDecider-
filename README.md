@@ -102,6 +102,35 @@ locket-merge --adapter runs/decider-2-7b --out models/locket-decider-2-7b
 
 `locket-train --limit 200` runs a quick smoke test before committing GPU hours.
 
+## Release on Hugging Face
+
+One script does everything on a single GPU machine: install, tests, train, calibrate, evaluate
+(trained and base), merge, write the model card from the measured results, and upload.
+
+1. **Get a GPU machine** with internet access, e.g. a RunPod / Lambda / Vast pod with a PyTorch
+   image. An 80 GB A100/H100 trains in bf16; a 24 GB card (RTX 4090, A10G, L4) uses QLoRA
+   automatically. Leave ~100 GB of disk for the base model, checkpoints and the merged weights.
+2. **Create a Hugging Face write token** at <https://huggingface.co/settings/tokens>.
+3. **Run:**
+
+   ```bash
+   git clone https://github.com/burkiuze/LocketDecider- && cd LocketDecider-
+   export HF_TOKEN=hf_...
+   export HF_REPO=<your-user-or-org>/locket-decider-2-7b
+
+   SMOKE=1 bash scripts/train_and_release.sh   # 200 examples, a short run, uploads nothing
+   bash scripts/train_and_release.sh            # the real run; uploads at the end
+   ```
+
+The smoke run catches data, token and dependency problems before any long GPU time is spent. If a
+dataset fails to download there, remove it from `data.train/validation/eval` in
+`configs/decider-2-7b.json` and run again. `PRIVATE=1` creates the Hub repo as private, so the
+model can be checked before it is made public.
+
+The upload contains the merged weights, tokenizer, `decider_config.json` (temperature and review
+threshold) and a model card whose numbers come only from `runs/eval.json` and
+`runs/eval-base.json`.
+
 ## Serve
 
 ```bash
@@ -148,6 +177,8 @@ locket_decider/
   merge.py        merge an adapter into standalone weights
   serve.py        FastAPI server
   distill.py      teacher-written, self-verified enterprise decisions
+  release.py      model card from eval results + Hugging Face upload
+scripts/train_and_release.sh
 configs/decider-2-7b.json
 tests/
 ```

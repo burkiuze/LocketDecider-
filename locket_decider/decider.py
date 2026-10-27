@@ -21,7 +21,15 @@ class DeciderConfig:
 
     @classmethod
     def read(cls, path: str) -> "DeciderConfig":
+        """Reads decider_config.json from a local folder, or from a Hugging Face repo id."""
         file = os.path.join(path, CONFIG_FILE)
+        if not os.path.isdir(path):
+            try:
+                from huggingface_hub import hf_hub_download
+
+                file = hf_hub_download(path, CONFIG_FILE)
+            except Exception:  # no hub access, or the repo has no config: use defaults
+                return cls()
         if not os.path.exists(file):
             return cls()
         with open(file, encoding="utf-8") as f:
